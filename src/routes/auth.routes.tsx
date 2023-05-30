@@ -1,3 +1,4 @@
+import { IRefetchUser } from '@hooks/useUser/types/IRefetchUser'
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -14,14 +15,20 @@ export type IAuthNavigatorRoutesProps = NativeStackNavigationProp<IAuthRoutes>
 
 const { Navigator, Screen } = createNativeStackNavigator<IAuthRoutes>()
 
-export function AuthRoutes() {
+interface IAuthRoutesProps {
+  validateUserLoggedIn: IRefetchUser
+}
+
+export function AuthRoutes({ validateUserLoggedIn }: IAuthRoutesProps) {
   return (
     <Navigator
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Screen name="login" component={LoginPage} />
+      <Screen name="login">
+        {() => <LoginPage validateUserLoggedIn={validateUserLoggedIn} />}
+      </Screen>
       <Screen name="register" component={RegisterPage} />
     </Navigator>
   )

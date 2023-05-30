@@ -1,11 +1,18 @@
+import { useUser } from '@hooks/useUser'
 import {
   createBottomTabNavigator,
   BottomTabNavigationProp,
 } from '@react-navigation/bottom-tabs'
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack'
 import { BoxesPage } from '@screens/Boxes'
 import { HomePage } from '@screens/Home'
+import { NotificationsPage } from '@screens/Notifications'
 import { ToDoPage } from '@screens/ToDo'
 import { UserPage } from '@screens/User'
+import { Avatar } from 'native-base'
 import {
   ListChecks,
   Package,
@@ -13,96 +20,143 @@ import {
   UserCircle,
 } from 'phosphor-react-native'
 
-type IAppRoutes = {
+type IAppStackRoutes = {
+  app: undefined
+  notifications: undefined
+}
+
+type IAppBottomTapRoutes = {
   home: undefined
   boxes: undefined
   toDo: undefined
   user: undefined
 }
 
-export type IAppNavigationRoutesProps = BottomTabNavigationProp<IAppRoutes>
+export type IAppNavigationBottomTabRoutesProps =
+  BottomTabNavigationProp<IAppBottomTapRoutes>
+export type IAppNavigationStackRoutesProps =
+  NativeStackNavigationProp<IAppStackRoutes>
 
-const { Navigator, Screen } = createBottomTabNavigator<IAppRoutes>()
+const BottomTap = createBottomTabNavigator<IAppBottomTapRoutes>()
+const Stack = createNativeStackNavigator<IAppStackRoutes>()
 
 export function AppRoutes() {
+  const { user } = useUser()
+
   return (
-    <Navigator
+    <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          height: 60,
-          paddingBottom: 10,
-          paddingTop: 10,
-        },
       }}
     >
-      <Screen
-        name="home"
-        component={HomePage}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <ProjectorScreenChart color={focused ? '#8D5DF1' : '#120720'} />
-          ),
-          tabBarLabelStyle: {
-            fontFamily: 'MarkaziText_700Bold',
-            textTransform: 'uppercase',
-            color: '#120720',
-            fontSize: 12,
-          },
-          tabBarLabel: 'Projetos',
-        }}
-      />
+      <Stack.Screen name="app">
+        {() => (
+          <BottomTap.Navigator
+            screenOptions={{
+              headerShown: false,
+              tabBarShowLabel: false,
+              tabBarStyle: {
+                height: 60,
+                paddingBottom: 10,
+                paddingTop: 10,
+              },
+            }}
+          >
+            <BottomTap.Screen
+              name="home"
+              component={HomePage}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <ProjectorScreenChart
+                    size={28}
+                    color={focused ? '#8D5DF1' : '#120720'}
+                  />
+                ),
+                tabBarLabelStyle: {
+                  fontFamily: 'MarkaziText_700Bold',
+                  textTransform: 'uppercase',
+                  color: '#120720',
+                  fontSize: 12,
+                },
+                tabBarLabel: 'Projetos',
+              }}
+            />
 
-      <Screen
-        name="boxes"
-        component={BoxesPage}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Package color={focused ? '#8D5DF1' : '#120720'} />
-          ),
-          tabBarLabelStyle: {
-            fontFamily: 'MarkaziText_700Bold',
-            textTransform: 'uppercase',
-            color: '#120720',
-            fontSize: 12,
-          },
-          tabBarLabel: 'Boxes',
-        }}
-      />
+            <BottomTap.Screen
+              name="boxes"
+              component={BoxesPage}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <Package size={28} color={focused ? '#8D5DF1' : '#120720'} />
+                ),
+                tabBarLabelStyle: {
+                  fontFamily: 'MarkaziText_700Bold',
+                  textTransform: 'uppercase',
+                  color: '#120720',
+                  fontSize: 12,
+                },
+                tabBarLabel: 'Boxes',
+              }}
+            />
 
-      <Screen
-        name="toDo"
-        component={ToDoPage}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <ListChecks color={focused ? '#8D5DF1' : '#120720'} />
-          ),
-          tabBarLabelStyle: {
-            fontFamily: 'MarkaziText_700Bold',
-            textTransform: 'uppercase',
-            color: '#120720',
-            fontSize: 12,
-          },
-          tabBarLabel: 'To-Do',
-        }}
-      />
+            <BottomTap.Screen
+              name="toDo"
+              component={ToDoPage}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <ListChecks
+                    size={28}
+                    color={focused ? '#8D5DF1' : '#120720'}
+                  />
+                ),
+                tabBarLabelStyle: {
+                  fontFamily: 'MarkaziText_700Bold',
+                  textTransform: 'uppercase',
+                  color: '#120720',
+                  fontSize: 12,
+                },
+                tabBarLabel: 'To-Do',
+              }}
+            />
 
-      <Screen
-        name="user"
-        component={UserPage}
+            <BottomTap.Screen
+              name="user"
+              component={UserPage}
+              options={{
+                tabBarIcon: ({ focused }) =>
+                  user?.infos.avatar.url ? (
+                    <Avatar
+                      source={{
+                        uri: user.infos.avatar.url,
+                      }}
+                      size="sm"
+                    />
+                  ) : (
+                    <UserCircle
+                      size={28}
+                      color={focused ? '#8D5DF1' : '#120720'}
+                    />
+                  ),
+                tabBarLabelStyle: {
+                  fontFamily: 'MarkaziText_700Bold',
+                  textTransform: 'uppercase',
+                  color: '#120720',
+                  fontSize: 12,
+                },
+                tabBarLabel: 'Usuário',
+              }}
+            />
+          </BottomTap.Navigator>
+        )}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="notifications"
+        component={NotificationsPage}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <UserCircle color={focused ? '#8D5DF1' : '#120720'} />
-          ),
-          tabBarLabelStyle: {
-            fontFamily: 'MarkaziText_700Bold',
-            textTransform: 'uppercase',
-            color: '#120720',
-            fontSize: 12,
-          },
-          tabBarLabel: 'Usuário',
+          animation: 'slide_from_right',
         }}
       />
-    </Navigator>
+    </Stack.Navigator>
   )
 }

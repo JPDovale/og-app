@@ -6,6 +6,10 @@ import { Loading } from '@components/Loading'
 import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Routes } from '@routes/index'
+import { NativeBaseProvider } from 'native-base'
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+const queryClient = new QueryClient()
 
 export default function App() {
   const { Cinzel_400Regular, Cinzel_700Bold } = Cinzel
@@ -29,14 +33,18 @@ export default function App() {
     !CinzelLoaded || !UncialAntiquaLoaded || !MarkaziTextLoaded
 
   return (
-    <SafeAreaProvider>
-      {loadingFonts ? <Loading /> : <Routes />}
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <NativeBaseProvider>
+          {loadingFonts ? <Loading /> : <Routes />}
 
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent
-      />
-    </SafeAreaProvider>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent
+          />
+        </NativeBaseProvider>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   )
 }

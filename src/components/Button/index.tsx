@@ -1,14 +1,17 @@
 import { Text } from '@components/Text'
+import { VariantProps } from 'class-variance-authority'
 import { ComponentProps, ReactNode } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import { buttonRootStyles } from './styles'
 
-interface IButtonRootProps extends ComponentProps<typeof TouchableOpacity> {}
+interface IButtonRootProps
+  extends ComponentProps<typeof TouchableOpacity>,
+    VariantProps<typeof buttonRootStyles> {}
 
-export function ButtonRoot({ ...rest }: IButtonRootProps) {
+export function ButtonRoot({ size, ...rest }: IButtonRootProps) {
   return (
     <TouchableOpacity
-      className={buttonRootStyles()}
+      className={buttonRootStyles({ size })}
       style={{
         elevation: 12,
       }}

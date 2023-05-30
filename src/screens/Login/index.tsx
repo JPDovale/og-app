@@ -9,14 +9,19 @@ import {
   loginPageContainerStyles,
 } from './styles'
 import { LinearGradient } from 'expo-linear-gradient'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, Linking } from 'react-native'
 import { useState } from 'react'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { ButtonLabel, ButtonRoot } from '@components/Button'
 import { useNavigation } from '@react-navigation/native'
 import { IAuthNavigatorRoutesProps } from '@routes/auth.routes'
-import { api } from '@api/index'
+import { APIConfig } from '@api/index'
+import { AppError } from '@utils/errors/AppError'
+import { useToast } from 'native-base'
+import { saveTokens } from '@storage/user/functions/saveTokens'
+import { IRefetchUser } from '@hooks/useUser/types/IRefetchUser'
+import { cookieParser } from '@utils/parsers/cookieParser'
 
 const loginFormSchema = z.object({
   email: z
@@ -30,8 +35,14 @@ const loginFormSchema = z.object({
 
 type ILoginFormData = z.infer<typeof loginFormSchema>
 
-export function LoginPage() {
+interface ILoginPageProps {
+  validateUserLoggedIn: IRefetchUser
+}
+
+export function LoginPage({ validateUserLoggedIn }: ILoginPageProps) {
   const [isPasswordView, setIsPasswordView] = useState(false)
+
+  const toast = useToast()
 
   const navigation = useNavigation<IAuthNavigatorRoutesProps>()
 
@@ -43,20 +54,44 @@ export function LoginPage() {
     resolver: zodResolver(loginFormSchema),
   })
 
-  async function handleLogin(data: ILoginFormData) {
-    try {
-      // const response = await api.post('/sessions/', {
-      //   email: data,
-      //   password: data.password,
-      // })
+  async function handleOpenForgotPasswordLink() {
+    const urlForgotPassword = 'https://www.ognare.com.br/user/password/forgot'
 
-      // console.log(response)
-      fetch('http://192.168.1.9:3030/api/').then((response) =>
-        console.log(response),
-      )
-    } catch (err) {
-      console.log(err)
+    const supported = await Linking.canOpenURL(urlForgotPassword)
+
+    if (supported) {
+      await Linking.openURL(urlForgotPassword)
+    } else {
+      return toast.show({
+        title: 'Não foi possível abrir o link',
+        description:
+          'Verifique sua conexão com a internet e tente novamente... se o erro persistir acesso "https://www.ognare.com.br/" para trocar a sua senha',
+        bgColor: 'red.500',
+        placement: 'top',
+      })
     }
+  }
+
+  async function handleLogin(data: ILoginFormData) {
+    const response = await APIConfig.post('/sessions/', {
+      email: data.email,
+      password: data.password,
+    })
+
+    if (response instanceof AppError) {
+      return toast.show({
+        title: response.title,
+        description: response.message,
+        bgColor: 'red.500',
+        placement: 'top',
+      })
+    }
+
+    const cookies = response.headers['set-cookie']![0]
+    const tokens = cookieParser(cookies)
+
+    await saveTokens(tokens)
+    validateUserLoggedIn()
   }
 
   return (
@@ -155,7 +190,7 @@ export function LoginPage() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleOpenForgotPasswordLink}>
             <Text fontFamily="textBold" fontSize="sm">
               Esqueci minha senha
             </Text>
