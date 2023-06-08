@@ -16,12 +16,12 @@ import { Controller, useForm } from 'react-hook-form'
 import { ButtonLabel, ButtonRoot } from '@components/Button'
 import { useNavigation } from '@react-navigation/native'
 import { IAuthNavigatorRoutesProps } from '@routes/auth.routes'
-import { APIConfig } from '@api/index'
-import { AppError } from '@utils/errors/AppError'
+import { api } from '@api/index'
 import { useToast } from 'native-base'
-import { saveTokens } from '@storage/user/functions/saveTokens'
 import { IRefetchUser } from '@hooks/useUser/types/IRefetchUser'
 import { cookieParser } from '@utils/parsers/cookieParser'
+import { IUserResponse } from '@api/responses/IUserResponse'
+import { useLocalStorage } from '@hooks/useLocalStorage'
 
 const loginFormSchema = z.object({
   email: z
@@ -42,8 +42,8 @@ interface ILoginPageProps {
 export function LoginPage({ validateUserLoggedIn }: ILoginPageProps) {
   const [isPasswordView, setIsPasswordView] = useState(false)
 
+  const { User } = useLocalStorage()
   const toast = useToast()
-
   const navigation = useNavigation<IAuthNavigatorRoutesProps>()
 
   const {
@@ -73,24 +73,26 @@ export function LoginPage({ validateUserLoggedIn }: ILoginPageProps) {
   }
 
   async function handleLogin(data: ILoginFormData) {
-    const response = await APIConfig.post('/sessions/', {
+    const response = await api.post<IUserResponse>('/sessions/', {
       email: data.email,
       password: data.password,
     })
 
-    if (response instanceof AppError) {
-      return toast.show({
-        title: response.title,
-        description: response.message,
+    if (response.error) {
+      toast.show({
+        title: response.error.title,
+        description: response.error.message,
         bgColor: 'red.500',
         placement: 'top',
       })
+
+      return
     }
 
-    const cookies = response.headers['set-cookie']![0]
+    const cookies = response.headers!['set-cookie']![0]
     const tokens = cookieParser(cookies)
 
-    await saveTokens(tokens)
+    await User.saveUserTokens(tokens)
     validateUserLoggedIn()
   }
 

@@ -1,22 +1,30 @@
 import { Text } from '@components/Text'
-import { VariantProps } from 'class-variance-authority'
-import { ComponentProps, ReactNode } from 'react'
-import { TouchableOpacity, View } from 'react-native'
-import { buttonRootStyles } from './styles'
+import { Button, HStack, Icon, VStack } from 'native-base'
+import { ComponentProps } from 'react'
 
-interface IButtonRootProps
-  extends ComponentProps<typeof TouchableOpacity>,
-    VariantProps<typeof buttonRootStyles> {}
+interface IButtonRootProps extends ComponentProps<typeof Button> {
+  vertical?: boolean
+  disabled?: boolean
+}
 
-export function ButtonRoot({ size, ...rest }: IButtonRootProps) {
+export function ButtonRoot({
+  vertical = false,
+  disabled = false,
+  children,
+  ...rest
+}: IButtonRootProps) {
   return (
-    <TouchableOpacity
-      className={buttonRootStyles({ size })}
-      style={{
-        elevation: 12,
-      }}
-      {...rest}
-    />
+    <Button bgColor="purple.800" opacity={disabled ? 50 : 100} {...rest}>
+      {vertical ? (
+        <VStack display="flex" alignItems="center" space={2}>
+          {children}
+        </VStack>
+      ) : (
+        <HStack display="flex" alignItems="center" space={2}>
+          {children}
+        </HStack>
+      )}
+    </Button>
   )
 }
 
@@ -28,10 +36,8 @@ export function ButtonLabel({ ...rest }: IButtonLabelProps) {
   )
 }
 
-interface IButtonIconProps {
-  children: ReactNode
-}
+interface IButtonIconProps extends ComponentProps<typeof Icon> {}
 
-export function ButtonIcon({ children }: IButtonIconProps) {
-  return <View>{children}</View>
+export function ButtonIcon({ ...props }: IButtonIconProps) {
+  return <Icon {...props} />
 }

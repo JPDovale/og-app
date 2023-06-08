@@ -121,21 +121,27 @@ module.exports = {
         '7xl': '72px',
         '8xl': '96px',
       },
-    },
-    boxShadow: {
-      default1: '4px 4px 8px #00000050',
-      default2: ' -1px -1px 3px #ffffff50',
 
-      onActive1: '4px 4px 8px #00000050',
-      onActive2: '-1px -1px 3px #ffffff50',
+      width: {
+        mid: '50%',
+        'mid-2': '48%',
+        'mid-4': '46%',
+      },
+      boxShadow: {
+        default1: '4px 4px 8px #00000050',
+        default2: ' -1px -1px 3px #ffffff50',
 
-      inFocus: '0 0 8px #84b3f8',
+        onActive1: '4px 4px 8px #00000050',
+        onActive2: '-1px -1px 3px #ffffff50',
 
-      accepted: '0 0 8px #adff6d',
+        inFocus: '0 0 8px #84b3f8',
 
-      denied: '0 0 8px #ff6161',
+        accepted: '0 0 8px #adff6d',
 
-      attention: '0 0 8px #f97700',
+        denied: '0 0 8px #ff6161',
+
+        attention: '0 0 8px #f97700',
+      },
     },
   },
   plugins: [],

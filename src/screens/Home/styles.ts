@@ -1,12 +1,7 @@
 import { cva } from 'class-variance-authority'
 
-export const homePageStyles = cva(['bg-gray900'])
+export const homePageStyles = cva(['bg-gray900', 'h-full'])
 
-export const homePageContentStyles = cva(['p-4'])
+export const homePageContentStyles = cva(['p-3'])
 
-export const homeCardStyles = cva([
-  'p-2',
-  'bg-purple900',
-  'rounded-md',
-  'shadow-black',
-])
+export const previewProjectsContainerStyles = cva(['flex', 'flex-col', 'mt-2'])

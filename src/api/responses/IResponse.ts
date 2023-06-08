@@ -1,3 +1,5 @@
+import { AxiosHeaders } from 'axios'
+
 export interface IResponseError {
   title: string
   message: string
@@ -14,4 +16,5 @@ export interface IResponse<TypeData = undefined> {
   ok: boolean
   data?: TypeData
   error?: IResponseError | IResponseRedirect
+  headers: AxiosHeaders | null
 }

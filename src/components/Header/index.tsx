@@ -2,21 +2,39 @@ import { Text } from '@components/Text'
 import { useUser } from '@hooks/useUser'
 import { useNavigation } from '@react-navigation/native'
 import { IAppNavigationStackRoutesProps } from '@routes/app.routes'
+import { Button, View } from 'native-base'
 import { BellSimple, Star } from 'phosphor-react-native'
-import { TouchableOpacity, View } from 'react-native'
-import { headerStyles, notificationsButtonStyles } from './styles'
+import { ComponentProps } from 'react'
 
-interface IHeaderProps {
+interface IHeaderProps extends ComponentProps<typeof View> {
   onScreen?: string
+  disableNotificationsButton?: boolean
 }
 
-export function Header({ onScreen = 'MagiScrita' }: IHeaderProps) {
+export function Header({
+  onScreen = 'MagiScrita',
+  disableNotificationsButton = false,
+}: IHeaderProps) {
   const navigation = useNavigation<IAppNavigationStackRoutesProps>()
 
   const { user, userIsPro } = useUser()
 
+  const withNewNotifications =
+    user?.account.notification.numberNew !== null &&
+    user?.account.notification.numberNew !== undefined &&
+    user?.account.notification.numberNew !== 0
+
   return (
-    <View className={headerStyles()}>
+    <View
+      w="full"
+      p={3}
+      display="flex"
+      flexDir="row"
+      borderBottomColor="purple.600"
+      borderBottomWidth="1"
+      alignItems="center"
+      justifyContent="space-between"
+    >
       <Text className="items-center" fontSize="lg" fontFamily="heading">
         {userIsPro && (
           <Star
@@ -32,17 +50,20 @@ export function Header({ onScreen = 'MagiScrita' }: IHeaderProps) {
         {onScreen}
       </Text>
 
-      <TouchableOpacity
-        className={notificationsButtonStyles({
-          withNewNotifications:
-            user?.account.notification.numberNew !== null &&
-            user?.account.notification.numberNew !== undefined &&
-            user?.account.notification.numberNew !== 0,
-        })}
-        onPress={() => navigation.navigate('notifications')}
-      >
-        <BellSimple size={18} />
-      </TouchableOpacity>
+      {!disableNotificationsButton && (
+        <Button
+          _pressed={{
+            bg: withNewNotifications ? 'amber.900' : 'transparent',
+          }}
+          p={1}
+          rounded="full"
+          bg={withNewNotifications ? 'purple.800' : 'transparent'}
+          opacity={withNewNotifications ? 100 : 50}
+          onPress={() => navigation.navigate('notifications')}
+        >
+          <BellSimple size={18} />
+        </Button>
+      )}
     </View>
   )
 }

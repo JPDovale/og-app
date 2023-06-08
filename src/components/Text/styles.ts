@@ -35,11 +35,15 @@ export const textStyles = cva(['leading-base', 'text-text800', 'm-0'], {
       medium: ['font-medium'],
       bold: ['font-bold'],
     },
+    colorInvert: {
+      true: ['text-white'],
+    },
   },
   defaultVariants: {
     fontFamily: 'body',
     fontSize: 'md',
     fontWeight: 'regular',
     lineHeight: 'base',
+    colorInvert: false,
   },
 })

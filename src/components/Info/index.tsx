@@ -1,22 +1,20 @@
 import { Text } from '@components/Text'
-import { cva, VariantProps } from 'class-variance-authority'
-import { ReactNode } from 'react'
-import { View } from 'react-native'
+import { VStack } from 'native-base'
+import { ComponentProps, ReactNode } from 'react'
 
-const infoContainerStyles = cva(['flex-col', 'w-full', 'mb-4'])
-
-interface IInfoProps extends VariantProps<typeof infoContainerStyles> {
+interface IInfoProps extends ComponentProps<typeof VStack> {
   title: string
   children: ReactNode
+  size?: 'xs' | 'sm' | 'md' | 'lg'
 }
 
-export function Info({ children, title, ...props }: IInfoProps) {
+export function Info({ children, title, size = 'sm', ...props }: IInfoProps) {
   return (
-    <View className={infoContainerStyles()} {...props}>
+    <VStack {...props}>
       <Text
         fontFamily="bodyBold"
         className="opacity-60"
-        fontSize="sm"
+        fontSize={size}
         style={{
           marginBottom: -6,
         }}
@@ -25,6 +23,6 @@ export function Info({ children, title, ...props }: IInfoProps) {
       </Text>
 
       {children}
-    </View>
+    </VStack>
   )
 }

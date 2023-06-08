@@ -6,10 +6,11 @@ import { IResponse } from './responses/IResponse'
 const cookieJar = new CookieJar()
 
 const APIConfig = axios.create({
-  baseURL: 'http://192.168.1.2:3030/api',
+  baseURL: 'http://192.168.1.10:3030/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
+    'On-Application': '@og-App',
   },
   jar: cookieJar,
 })
@@ -17,7 +18,7 @@ const APIConfig = axios.create({
 wrapper(APIConfig)
 
 APIConfig.interceptors.response.use(
-  (res) => res.data,
+  (res) => ({ ...res.data, headers: res.headers }),
   (error) => {
     if (error.response && error.response.data) {
       return Promise.resolve(error.response.data)

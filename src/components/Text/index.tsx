@@ -12,6 +12,7 @@ export function Text({
   fontSize,
   fontWeight,
   lineHeight,
+  colorInvert,
   ...props
 }: ITextProps) {
   return (
@@ -21,6 +22,7 @@ export function Text({
         fontSize,
         fontWeight,
         lineHeight,
+        colorInvert,
       })}
       {...props}
     />

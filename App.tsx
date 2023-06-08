@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+import 'react-native-gesture-handler'
 import * as Cinzel from '@expo-google-fonts/cinzel'
 import * as UncialAntiqua from '@expo-google-fonts/uncial-antiqua'
 import * as MarkaziText from '@expo-google-fonts/markazi-text'
@@ -8,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Routes } from '@routes/index'
 import { NativeBaseProvider } from 'native-base'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { LIGHT } from '@theme/light'
 
 const queryClient = new QueryClient()
 
@@ -35,7 +37,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <NativeBaseProvider>
+        <NativeBaseProvider theme={LIGHT}>
           {loadingFonts ? <Loading /> : <Routes />}
 
           <StatusBar
